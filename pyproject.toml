@@ -1,21 +1,26 @@
 [project]
-name = "packagename"
+name = "pandoraaperture"
 version = "0.1.0"
 description = ""
 authors = [
     {name = "Christina Hedges",email = "christina.l.hedges@nasa.gov"}
 ]
-readme = "README.md"
-requires-python = ">=3.9"
+readme = "docs/README.md"
+requires-python =  ">=3.9,<3.13"
 dependencies = [
     "rich (>=13.9.4,<14.0.0)",
     "numpy (>=1.2)",
     "pandas (>=2.2.3,<3.0.0)",
-    "appdirs (>=1.4.4,<2.0.0)"
+    "appdirs (>=1.4.4,<2.0.0)",
+    "sparse3d (>=1.2.10)",
+    "matplotlib (>=2.0.0)",
+    "astropy (>=6.0.1)",
+    "gaiaoffline (>=1.0.3,<2.0.0)",
+    "pandoraref (>=0.2.0,<0.3.0)"
 ]
 
 [tool.poetry]
-packages = [{include = "packagename", from = "src"}]
+packages = [{include = "pandoraaperture", from = "src"}]
 
 [tool.poetry.group.dev]
 optional = true

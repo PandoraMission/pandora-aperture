@@ -1,9 +1,7 @@
 # Standard library
 import logging  # noqa: E402
 import os  # noqa
-import time  # noqa: E402
 from glob import glob
-from threading import Event, Thread  # noqa: E402
 
 # Third-party
 from rich.console import Console  # noqa: E402
@@ -20,12 +18,13 @@ from importlib.metadata import PackageNotFoundError, version  # noqa
 # Third-party
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
+import pandoraref as pr  # noqa: E402
 from appdirs import user_config_dir, user_data_dir  # noqa: E402
 
 
 def get_version():
     try:
-        return version("packagename")
+        return version("pandoraaperture")
     except PackageNotFoundError:
         return "unknown"
 
@@ -48,40 +47,18 @@ class PandoraLogger(logging.Logger):
             )
         )
         self.addHandler(self.handler)
-        self.spinner_thread = None
-        self.spinner_event = None
-
-    def start_spinner(self, message="Processing..."):
-        if self.spinner_thread is None:
-            self.spinner_event = Event()
-            self.spinner_thread = Thread(target=self._spinner, args=(message,))
-            self.spinner_thread.start()
-
-    def stop_spinner(self):
-        if self.spinner_thread is not None:
-            self.spinner_event.set()
-            self.spinner_thread.join()
-            self.spinner_thread = None
-            self.spinner_event = None
-
-    def _spinner(self, message):
-        with self.handler.console.status(
-            "[bold green]" + message
-        ) as status:  # noqa
-            while not self.spinner_event.is_set():
-                time.sleep(0.1)
 
 
-def get_logger(name="packagename"):
+def get_logger(name="pandoraaperture"):
     """Configure and return a logger with RichHandler."""
     return PandoraLogger(name)
 
 
-CONFIGDIR = user_config_dir("packagename")
+CONFIGDIR = user_config_dir("pandoraaperture")
 os.makedirs(CONFIGDIR, exist_ok=True)
 CONFIGPATH = os.path.join(CONFIGDIR, "config.ini")
 
-logger = get_logger("packagename")
+logger = get_logger("pandoraaperture")
 
 
 def reset_config():
@@ -90,7 +67,9 @@ def reset_config():
     config = configparser.ConfigParser()
     config["SETTINGS"] = {
         "log_level": "WARNING",
-        "data_dir": user_data_dir("pandorapsf"),
+        "data_dir": user_data_dir("pandoraaperture"),
+        "pixel_buffer": 15,
+        "catalog_columns": "source_id, phot_g_mean_flux, phot_bp_mean_flux, phot_rp_mean_flux, j_flux, h_flux, k_flux, teff_gspphot",
     }
     with open(CONFIGPATH, "w") as configfile:
         config.write(configfile)
@@ -138,7 +117,7 @@ config = load_config()
 for key in ["data_dir", "log_level"]:
     if key not in config["SETTINGS"]:
         logger.error(
-            f"`{key}` missing from the `packagename` config file. Your configuration is being reset."
+            f"`{key}` missing from the `pandoraaperture` config file. Your configuration is being reset."
         )
         reset_config()
         config = load_config()
@@ -160,3 +139,10 @@ def display_config() -> pd.DataFrame:
         df = df.set_index(["section", "key"])
         dfs.append(df)
     return pd.concat(dfs)
+
+
+NIRDAReference = pr.NIRDAReference()
+VISDAReference = pr.VISDAReference()
+
+from .prf import PRF, DispersedPRF, SpatialPRF  # noqa: E402,F401
+from .scene import DispersedSkyScene, ROISkyScene, SkyScene  # noqa: E402,F401

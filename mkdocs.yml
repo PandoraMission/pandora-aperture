@@ -1,16 +1,23 @@
-site_name: packagename
-site_url: https://pandoramission.github.io/pandora-blank/
+site_name: pandora-aperture
+site_url: https://pandoramission.github.io/pandora-aperture/
 docs_dir: docs
 
 nav:
   - Home: README.md
-  - API: apidocs.md
-  - Example: notebook-example.ipynb
-  
+  - API:
+    - PRFs:
+      - PRF API: prf.md
+      - SpatialPRF API: spatialprf.md
+      - DispersedPRF API: dispersedprf.md
+    - Scenes:
+      - SkyScene API: skyscene.md
+      - ROISkyScene API: roiskyscene.md
+      - DispersedSkyScene API: dispersedskyscene.md
+ 
 theme:
   name: "material"
   icon:
-    logo: material/checkbox-blank
+    logo: material/camera-iris
   features:
     - content.code.copy
     - content.code.annotate 
@@ -35,7 +42,7 @@ theme:
         icon: material/brightness-4
         name: Switch to system preference
 
-repo_url: https://github.com/pandoramission/pandora-blank
+repo_url: https://github.com/pandoramission/pandora-aperture
 plugins:
   - search
   - include-markdown
@@ -43,15 +50,24 @@ plugins:
       execute: false
   - mkdocstrings:
       watch:
-        - src/packagename
+        - src/pandoraaperture
       default_handler: python      
       handlers:
         python:
+          paths: [src]
+          load_external_modules: true
           options:
             show_source: false
+            inherited_members: true
             filters:
               - "!^_"
-            heading_level: 2  # Ensures API docs have an H2 header for structure
+            heading_level: 2
+            sorting: source 
+            docstring_style: numpy
+            merge_init_into_class: true
+            force_inspection: true
+            load_external_modules: true
+            docstring_sectioning: true
 markdown_extensions:
   - admonition
   - pymdownx.details
