@@ -1,15 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://pandoramission.github.io/pandora-blank/</loc>
+         <loc>https://pandoramission.github.io/pandora-aperture/</loc>
          <lastmod>2025-11-12</lastmod>
     </url>
     <url>
-         <loc>https://pandoramission.github.io/pandora-blank/apidocs/</loc>
+         <loc>https://pandoramission.github.io/pandora-aperture/dispersedprf/</loc>
          <lastmod>2025-11-12</lastmod>
     </url>
     <url>
-         <loc>https://pandoramission.github.io/pandora-blank/notebook-example/</loc>
+         <loc>https://pandoramission.github.io/pandora-aperture/dispersedskyscene/</loc>
+         <lastmod>2025-11-12</lastmod>
+    </url>
+    <url>
+         <loc>https://pandoramission.github.io/pandora-aperture/prf/</loc>
+         <lastmod>2025-11-12</lastmod>
+    </url>
+    <url>
+         <loc>https://pandoramission.github.io/pandora-aperture/roiskyscene/</loc>
+         <lastmod>2025-11-12</lastmod>
+    </url>
+    <url>
+         <loc>https://pandoramission.github.io/pandora-aperture/skyscene/</loc>
+         <lastmod>2025-11-12</lastmod>
+    </url>
+    <url>
+         <loc>https://pandoramission.github.io/pandora-aperture/spatialprf/</loc>
          <lastmod>2025-11-12</lastmod>
     </url>
 </urlset>
