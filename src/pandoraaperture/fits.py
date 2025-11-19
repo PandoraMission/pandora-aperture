@@ -85,15 +85,15 @@ class FITSMixins:
 
         hdu.header["CONTAM"] = (
             contamination,
-            "Amount of flux not from the target inside the aperture in electrons/second",
+            "Flux not from the target in aperture in e/s",
         )
         hdu.header["COMPLTE"] = (
             completeness,
-            "Fraction of flux from the target inside the aperture",
+            "Fraction of flux from the target in aperture",
         )
         hdu.header["TOTAP"] = (
             total_in_aperture,
-            "Total flux expected inside the aperture in electrons/second",
+            "Total flux expected in aperture in e/s",
         )
         for attr in ["RA", "Dec", "row", "column"]:
             hdu.header[attr] = self.cat.iloc[idx][attr]
