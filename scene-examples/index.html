@@ -1191,14 +1191,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h1 id="example-usage">Example Usage<a class="anchor-link" href="#example-usage">¶</a></h1><p>The <code>SkyScene</code> object is designed to give you access to many PRFs to make up a field of stars. This will rely on you having <code>gaiaoffline</code> installed and the database for <code>gaiaoffline</code> downloaded and in the right place.</p>
-<p>!!! note "You must ensure you have <code>gaiaoffline</code> database installed"</p>
-<pre><code>You should follow the [`gaiaoffline` documentation](https://christinahedges.github.io/gaiaoffline/) to ensure your database is installed correctly. This database is 30gb, and you should download the approved one from Zenodo or obtain it from a team member. You can check you have the database downloaded using
-```python
-import gaiaoffline as go
-import os
-
-assert os.path.isfile(go.DATABASEPATH)
-```</code></pre>
+<p>!!! note "You must ensure you have gaiaoffline database installed"</p>
+<pre><code>You should follow the [`gaiaoffline` documentation](https://christinahedges.github.io/gaiaoffline/) to ensure your database is installed correctly. This database is 30gb, and you should download the approved one from Zenodo or obtain it from a team member.</code></pre>
 <p>To create a SkyScene we three things:</p>
 <ol>
 <li>The PRF: You should load the PRF you want to be used in the scene. You obtain the <code>PRF</code> from <code>pandoraaperture</code></li>
