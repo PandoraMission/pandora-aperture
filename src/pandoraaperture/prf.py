@@ -8,6 +8,7 @@ from astropy.io import fits
 from scipy.interpolate import RectBivariateSpline
 from sparse3d import Sparse3D
 
+from . import NIRDAReference, VISDAReference
 from .docstrings import add_docstring
 from .utils import interpfunc
 
@@ -141,18 +142,21 @@ class PRF(object):
 
     @classmethod
     @add_docstring(parameters=["name"])
-    def from_reference(cls, name: str):
+    def from_reference(cls, name: str = "visda"):
         """
         Load a PRF from `pandoraref`.
         """
         if name.lower() in ["v", "vis", "vda", "visda"]:
-            raise NotImplementedError
+            file = VISDAReference.prf_file
         elif name.lower() in ["n", "nir", "nirda", "ir"]:
-            raise NotImplementedError
+            raise ValueError(
+                f"Can not open NIRDA PRF with class `{cls.__name__}`. Try a `DispersedPRF`."
+            )
         else:
             raise ValueError(
                 f"Can not parse PRF name '{name}', please select a different name."
             )
+        return cls.from_file(file)
 
     def __repr__(self):
         return "PRF"
@@ -527,6 +531,7 @@ class DispersedPRF(PRF):
         self.norm = norm
         self.trace_column = u.Quantity(trace_column, "pixel")
         self.trace_row = u.Quantity(trace_row, "pixel")
+
         return
 
     @property
@@ -657,8 +662,8 @@ class DispersedPRF(PRF):
             return X
 
     @classmethod
-    @add_docstring(parameters=["file"])
-    def from_file(cls, file):
+    @add_docstring(parameters=["file", "pixel_resolution"])
+    def from_file(cls, file, pixel_resolution=0.25):
         """
         Load a PRF object from a file.
         """
@@ -671,6 +676,26 @@ class DispersedPRF(PRF):
         flux = hdulist[1].data
         trace_column = u.Quantity(hdulist[2].data, "pixel")
         trace_row = u.Quantity(hdulist[3].data, "pixel")
+
+        def _interpolate_prf(x, y, flux, pixel_resolution):
+            y2 = np.arange(
+                np.floor(y.value.min()),
+                np.ceil(y.value.max()),
+                pixel_resolution,
+            )
+            x2 = np.interp(y2, y.value, x.value)
+            flux2 = np.asarray(
+                [
+                    interpfunc(yi, y.value, flux.transpose([1, 2, 0]))
+                    for yi in y2
+                ]
+            )
+            return x2 * u.pixel, y2 * u.pixel, flux2
+
+        trace_column, trace_row, flux = _interpolate_prf(
+            trace_column, trace_row, flux, pixel_resolution=pixel_resolution
+        )
+
         pixel_size = hdulist[0].header["PIXSIZE"] * u.micron / u.pix
         sub_pixel_size = hdulist[0].header["SUBPIXSZ"] * u.micron / u.pix
         # This should come from the file...
@@ -691,6 +716,24 @@ class DispersedPRF(PRF):
             imcorner=imcorner,
         )
 
+    @classmethod
+    @add_docstring(parameters=["name", "pixel_resolution"])
+    def from_reference(cls, name: str = "nirda", pixel_resolution=0.25):
+        """
+        Load a PRF from `pandoraref`.
+        """
+        if name.lower() in ["v", "vis", "vda", "visda"]:
+            raise ValueError(
+                f"Can not open VISDA PRF with class `{cls.__name__}`. Try a `PRF` or `SpatialPRF`."
+            )
+        elif name.lower() in ["n", "nir", "nirda", "ir"]:
+            file = NIRDAReference.prf_file
+        else:
+            raise ValueError(
+                f"Can not parse PRF name '{name}', please select a different name."
+            )
+        return cls.from_file(file, pixel_resolution=pixel_resolution)
+
     def plot(self, **kwargs):
         """Plots the PRF. Use this functon to visually inspect the PRF."""
         X = self.to_sparse3d(
@@ -700,7 +743,7 @@ class DispersedPRF(PRF):
             )
         )
         fig, ax = plt.subplots(
-            figsize=(2, 7),
+            figsize=(7, 7),
             dpi=kwargs.pop("dpi", 100),
         )
         cmap = kwargs.pop("cmap", "viridis")
@@ -712,7 +755,12 @@ class DispersedPRF(PRF):
             vmin=vmin,
             vmax=vmax,
         )
-        ax.set(xlabel="Pixel Column", ylabel="Pixel Row", title="PRF")
+        ax.set(
+            xlabel="Pixel Column",
+            ylabel="Pixel Row",
+            title="PRF",
+            aspect="equal",
+        )
         cbar = plt.colorbar(im, ax=ax)
         cbar.set_label("PRF")
         return fig

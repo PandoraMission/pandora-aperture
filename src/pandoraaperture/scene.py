@@ -5,6 +5,7 @@ from typing import List, Tuple
 
 # Third-party
 import astropy.units as u
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from astropy.coordinates import Distance, SkyCoord
@@ -26,7 +27,7 @@ class SkyScene(FITSMixins):
 
     prf: PRF
     wcs: WCS
-    time: Time
+    time: Time = Time.now()
     user_cat: pd.DataFrame = None
 
     def __repr__(self):
@@ -116,10 +117,10 @@ class SkyScene(FITSMixins):
 
         # add buffer here for DispersedPRF
         if isinstance(self.prf, DispersedPRF):
-            r1 += self.prf.y.min()
-            r2 += self.prf.y.max()
-            c1 += self.prf.x.min()
-            c2 += self.prf.x.max()
+            r1 += self.prf.trace_column.value.min()
+            r2 += self.prf.trace_column.value.max()
+            c1 += self.prf.trace_row.value.min()
+            c2 += self.prf.trace_row.value.max()
         radius = np.max(
             self.wcs.pixel_to_world(
                 [c1, c1, c2, c2], [r1, r2, r1, r2]
@@ -165,7 +166,16 @@ class SkyScene(FITSMixins):
         self.pixel_buffer = int(config["SETTINGS"]["pixel_buffer"])
         self.cols = config["SETTINGS"]["catalog_columns"].split(", ")
         self._check_user_cat()
+        self.time = Time(self.time)
         self.X, self.dX0, self.dX1, self.cat = self._get_X()
+
+    @property
+    def imcorner(self):
+        return self.prf.imcorner
+
+    @property
+    def imshape(self):
+        return self.prf.imshape
 
     @add_docstring(parameters=["delta_pos"], returns=["A"])
     def A(self, delta_pos=None):
@@ -184,15 +194,29 @@ class SkyScene(FITSMixins):
             new_col=self.X.subcol + jitterint[1],
         )
 
+    @add_docstring(parameters=["delta_pos"])
+    def evaluate(self, delta_pos=None):
+        """Returns a dense image of the SkyScene"""
+        r, c = (
+            np.arange(self.imcorner[0], self.imcorner[0] + self.imshape[0]),
+            np.arange(self.imcorner[1], self.imcorner[1] + self.imshape[1]),
+        )
+        return r, c, self.A(delta_pos=delta_pos).dot(self.flux.value)
+
     def _get_VDAflux(self, cat):
         """Gives the flux on the VDA. This can be updated with a reference product in the future...!"""
         # This is approximately the right flux for the VDA in electrons per second
-        return cat.phot_bp_mean_flux.values * 0.9 * u.electron / u.second
+        return (
+            np.nan_to_num(cat.phot_bp_mean_flux.values)
+            * 0.9
+            * u.electron
+            / u.second
+        )
 
     def _get_NIRDAflux(self, cat):
         """Gives the flux on the NIRDA. This can be updated with a reference product in the future...!"""
         # This is approximately the right flux for the NIRDA in electrons per second
-        return cat.j_flux.values * 1 * u.electron / u.second
+        return np.nan_to_num(cat.j_flux.values * 1) * u.electron / u.second
 
     @property
     def VDAflux(self):
@@ -214,11 +238,47 @@ class SkyScene(FITSMixins):
     @classmethod
     @add_docstring(parameters=["ra", "dec", "theta", "time"])
     def from_pointing(cls, ra, dec, theta, time=Time.now()):
-        wcs = VISDAReference().get_wcs(
-            target_ra=ra, target_dec=dec, theta=theta
-        )
+        wcs = VISDAReference.get_wcs(target_ra=ra, target_dec=dec, theta=theta)
         prf = SpatialPRF.from_reference("VISDA")
         return cls(prf=prf, wcs=wcs, time=time)
+
+    def plot(self, **kwargs):
+        """Plots the SkyScene. Use this functon to visually inspect the SkyScene."""
+        r, c, image = self.evaluate()
+        fig, ax = plt.subplots(
+            figsize=(7, 7),
+            dpi=kwargs.pop("dpi", 100),
+        )
+        cmap = kwargs.pop("cmap", "viridis")
+        vmin = kwargs.pop("vmin", 0)
+        vmax = kwargs.pop("vmax", 100)
+        im = ax.pcolormesh(
+            c,
+            r,
+            image,
+            cmap=cmap,
+            vmin=vmin,
+            vmax=vmax,
+        )
+        ax.set(
+            xlabel="Pixel Column",
+            ylabel="Pixel Row",
+            title="SkyScene",
+            aspect="equal",
+        )
+        cbar = plt.colorbar(im, ax=ax)
+        cbar.set_label("Flux [e$^-$/s]")
+        return fig
+
+    def _get_row0(self, delta_pos=None):
+        if delta_pos is None:
+            delta_pos = (0, 0)
+        return self.X.subrow[0, 0] + np.round(delta_pos[0]).astype(int)
+
+    def _get_column0(self, delta_pos=None):
+        if delta_pos is None:
+            delta_pos = (0, 0)
+        return self.X.subol[0, 0] + np.round(delta_pos[1]).astype(int)
 
 
 @add_docstring(parameters=["prf", "wcs", "time", "user_cat"])
@@ -229,7 +289,9 @@ class DispersedSkyScene(SkyScene):
     @add_docstring(parameters=["cat"])
     def _clean_catalog(self, cat):
         """Hidden method that returns a cleaned version of a catalog."""
-        length = self.prf.y.max() - self.prf.y.min()
+        length = (
+            self.prf.trace_row.value.max() - self.prf.trace_row.value.min()
+        )
         k = (
             cat.row.values
             > (self.prf.imcorner[0] - length - self.pixel_buffer)
@@ -242,7 +304,10 @@ class DispersedSkyScene(SkyScene):
                 + self.pixel_buffer
             )
         )
-        length = self.prf.x.max() - self.prf.x.min()
+        length = (
+            self.prf.trace_column.value.max()
+            - self.prf.trace_column.value.min()
+        )
         k &= (
             cat.column.values
             > (self.prf.imcorner[1] - length - self.pixel_buffer)
@@ -272,7 +337,7 @@ class DispersedSkyScene(SkyScene):
             x, dx0, dx1 = self._get_sparse_matrix((r, c))
             x, dx0, dx1 = [
                 Sparse3D(
-                    data=a.dot(self._spectrum_norm)[:, :, None],
+                    data=a.dot(self._spectrum_norm)[:, :, None].value,
                     row=R[:, :, None],
                     col=C[:, :, None],
                     imshape=self.prf.imshape,
@@ -294,9 +359,13 @@ class DispersedSkyScene(SkyScene):
         self.pixel_buffer = int(config["SETTINGS"]["pixel_buffer"])
         self.cols = config["SETTINGS"]["catalog_columns"].split(", ")
         self._spectrum_norm = (
-            NIRDAReference.get_spectrum_normalization_per_pixel(self.prf.y)
+            NIRDAReference.get_spectrum_normalization_per_pixel(
+                self.prf.trace_row.value
+            )
         )
-        self._spectrum_norm /= np.trapz(self._spectrum_norm, self.prf.y)
+        self._spectrum_norm /= np.trapz(
+            self._spectrum_norm, self.prf.trace_row.value
+        )
         self._check_user_cat()
         self.X, self.dX0, self.dX1, self.cat = self._get_X()
 
@@ -304,6 +373,13 @@ class DispersedSkyScene(SkyScene):
     def flux(self):
         """Here we set the flux that is assumed to be the default for this object. For dispersed sky scenes it's NIRDA."""
         return self.NIRDAflux
+
+    @classmethod
+    @add_docstring(parameters=["ra", "dec", "theta", "time"])
+    def from_pointing(cls, ra, dec, theta, time=Time.now()):
+        wcs = NIRDAReference.get_wcs(target_ra=ra, target_dec=dec, theta=theta)
+        prf = DispersedPRF.from_reference("NIRDA")
+        return cls(prf=prf, wcs=wcs, time=time)
 
 
 @add_docstring(
@@ -361,6 +437,33 @@ class ROISkyScene(SkyScene):
             )
         return cat[k].reset_index(drop=True)
 
+    @add_docstring(parameters=["delta_pos"])
+    def evaluate(self, delta_pos=None):
+        """Returns a dense image of the SkyScene
+
+        Returns
+        -------
+        r: npt.NDArray
+            Array of row positions of the image
+        c: npt.NDArray
+            Array of column positions of the image
+        im: npt.NDArray
+            Image of the scene
+        """
+        if delta_pos is None:
+            delta_pos = (0, 0)
+        r = (
+            np.mgrid[: self.nROIs, : self.ROI_size[0]][1]
+            + np.asarray(self.ROI_corners)[:, 0][:, None].astype(int)
+            + np.round(delta_pos[0]).astype(int)
+        )
+        c = (
+            np.mgrid[: self.nROIs, : self.ROI_size[1]][1]
+            + np.asarray(self.ROI_corners)[:, 1][:, None].astype(int)
+            + np.round(delta_pos[1]).astype(int)
+        )
+        return r, c, self.A(delta_pos=delta_pos).dot(self.flux.value)
+
     @add_docstring(parameters=["location", "gradients"])
     def _get_sparse_matrix(self, location, gradients=True):
         """Hidden method to get a sparse matrix for a particular location.
@@ -391,10 +494,58 @@ class ROISkyScene(SkyScene):
             )
 
     @classmethod
-    @add_docstring(parameters=["ra", "dec", "theta", "time"])
-    def from_pointing(cls, ra, dec, theta, time=Time.now()):
-        wcs = VISDAReference().get_wcs(
-            target_ra=ra, target_dec=dec, theta=theta
+    @add_docstring(
+        parameters=[
+            "ra",
+            "dec",
+            "theta",
+            "time",
+            "nROIs",
+            "ROI_corners",
+            "ROI_size",
+        ]
+    )
+    def from_pointing(
+        cls, ra, dec, theta, nROIs, ROI_corners, ROI_size, time=Time.now()
+    ):
+        wcs = VISDAReference.get_wcs(target_ra=ra, target_dec=dec, theta=theta)
+        prf = SpatialPRF.from_reference("VISDA")
+        return cls(
+            prf=prf,
+            wcs=wcs,
+            nROIs=nROIs,
+            ROI_corners=ROI_corners,
+            ROI_size=ROI_size,
+            time=time,
         )
-        prf = DispersedPRF.from_reference("NIRDA")
-        return cls(prf=prf, wcs=wcs, time=time)
+
+    def plot(self, **kwargs):
+        """Plots the SkyScene. Use this functon to visually inspect the SkyScene."""
+        r, c, image = self.evaluate()
+        fig, ax = plt.subplots(
+            figsize=(7, 7),
+            dpi=kwargs.pop("dpi", 100),
+        )
+        cmap = kwargs.pop("cmap", "viridis")
+        vmin = kwargs.pop("vmin", 0)
+        vmax = kwargs.pop("vmax", 100)
+        im = ax.pcolormesh(
+            np.hstack(image),
+            cmap=cmap,
+            vmin=vmin,
+            vmax=vmax,
+        )
+        [
+            ax.axvline((i + 1) * self.ROI_size[0], c="white", ls="--")
+            for i in range(self.nROIs)
+        ]
+        ax.set(
+            xlabel="ROI Pixel Column",
+            ylabel="ROI Pixel Row",
+            title="ROISkyScene",
+            aspect="equal",
+            xlim=(0, self.ROI_size[0] * self.nROIs),
+        )
+        cbar = plt.colorbar(im, ax=ax, orientation="horizontal")
+        cbar.set_label("Flux [e$-$/s]")
+        return fig

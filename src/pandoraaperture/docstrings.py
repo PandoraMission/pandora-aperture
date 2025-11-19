@@ -147,6 +147,11 @@ DOCSTRINGS = {
     "ra": (u.Quantity, "Right Ascention"),
     "dec": (u.Quantity, "Declination"),
     "theta": (u.Quantity, "Roll angle in degrees"),
+    "pixel_resolution": (
+        float,
+        "The separation between different elements in the PRF model in pixels. For example 0.25"
+        " means there will be approximately 0.25 pixels between each element.",
+    ),
 }
 
 

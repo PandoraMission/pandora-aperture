@@ -133,10 +133,8 @@ class FITSMixins:
             delta_pos = (0, 0)
         cat["row"] += delta_pos[0]
         cat["column"] += delta_pos[1]
-        cat["row0"] = self.X.subrow[0, 0] + np.round(delta_pos[0]).astype(int)
-        cat["column0"] = self.X.subcol[0, 0] + np.round(delta_pos[1]).astype(
-            int
-        )
+        cat["row0"] = self._get_row0(delta_pos=delta_pos)
+        cat["column0"] = self._get_column0(delta_pos=delta_pos)
         tab_hdu = fits.convenience.table_to_hdu(Table.from_pandas(cat))
         tab_hdu.header["EXTNAME"] = "CATALOG"
         return tab_hdu

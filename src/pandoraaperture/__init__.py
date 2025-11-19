@@ -8,6 +8,7 @@ from rich.console import Console  # noqa: E402
 from rich.logging import RichHandler  # noqa: E402
 
 PACKAGEDIR = os.path.abspath(os.path.dirname(__file__))
+DOCSDIR = "/".join(PACKAGEDIR.split("/")[:-2]) + "/docs/"
 TESTDIR = "/".join(PACKAGEDIR.split("/")[:-2]) + "/tests/"
 PANDORASTYLE = glob(f"{PACKAGEDIR}/data/pandora.mplstyle")
 

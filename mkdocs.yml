@@ -6,10 +6,13 @@ nav:
   - Home: README.md
   - API:
     - PRFs:
+      - Example Usage: prf-examples.ipynb
       - PRF API: prf.md
       - SpatialPRF API: spatialprf.md
       - DispersedPRF API: dispersedprf.md
+
     - Scenes:
+      - Example Usage: scene-examples.ipynb
       - SkyScene API: skyscene.md
       - ROISkyScene API: roiskyscene.md
       - DispersedSkyScene API: dispersedskyscene.md
@@ -70,6 +73,7 @@ plugins:
             docstring_sectioning: true
 markdown_extensions:
   - admonition
+  - codehilite
   - pymdownx.details
   - pymdownx.superfences
   - pymdownx.arithmatex:
