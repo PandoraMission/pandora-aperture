@@ -12,7 +12,7 @@
       
       
       
-        <link rel="next" href="prf/">
+        <link rel="next" href="prf-examples/">
       
       
       <link rel="icon" href="assets/images/favicon.png">
@@ -272,6 +272,18 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="." class="md-nav__link md-nav__link--active">
         
   
@@ -282,6 +294,34 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -358,6 +398,28 @@
             PRFs
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="prf-examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Example Usage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -476,6 +538,28 @@
   
   
     <li class="md-nav__item">
+      <a href="scene-examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Example Usage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="skyscene/" class="md-nav__link">
         
   
@@ -570,6 +654,23 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -587,7 +688,18 @@
   
 
 
+<p><a href="https://github.com/pandoramission/pandora-aperture/actions/workflows/black.yml"><img src="https://github.com/pandoramission/pandora-aperture/workflows/black/badge.svg" alt="black status"/></a> <a href="https://github.com/pandoramission/pandora-aperture/actions/workflows/flake8.yml"><img src="https://github.com/pandoramission/pandora-aperture/workflows/flake8/badge.svg" alt="flake8 status"/></a> <a href="https://pandoramission.github.io/pandora-aperture/"><img alt="Generic badge" src="https://img.shields.io/badge/documentation-live-blue.svg" /></a>
+<a href="https://pypi.org/project/pandoraaperture/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/pandoraaperture" /></a>
+<a href="https://pypi.org/project/pandoraaperture/"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/pandoraaperture" /></a></p>
 <h1 id="pandora-aperture">Pandora Aperture</h1>
+<h2 id="installation">Installation</h2>
+<p>To install you can use</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>pandoraaperture<span class="w"> </span>--upgrade
+</span></code></pre></div>
+<p>You should update your package often, as we frequently put out new versions with updated Current Best Estimates, and some limited new functionality. Check your version number using</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandoraaperture</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pa</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">pa</span><span class="o">.</span><span class="n">__version__</span>
+</span></code></pre></div>
 
 
 

@@ -14,7 +14,7 @@
         <link rel="prev" href="../spatialprf/">
       
       
-        <link rel="next" href="../skyscene/">
+        <link rel="next" href="../scene-examples/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -362,6 +362,28 @@
   
   
     <li class="md-nav__item">
+      <a href="../prf-examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Example Usage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../prf/" class="md-nav__link">
         
   
@@ -567,6 +589,28 @@
   
   
     <li class="md-nav__item">
+      <a href="../scene-examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Example Usage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../skyscene/" class="md-nav__link">
         
   
@@ -741,6 +785,7 @@
 
 
 <h1 id="dispersedprf-api-documentation"><code>DispersedPRF</code> API Documentation</h1>
+<p><img alt="Dispersed PSF" src="../images/DispersedPRF.png" /></p>
 
 
 <div class="doc doc-object doc-class">
@@ -1043,7 +1088,7 @@
 
 
 <h2 id="pandoraaperture.prf.DispersedPRF.from_file" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">from_file</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">from_file</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">pixel_resolution</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -1083,6 +1128,21 @@
                 <em>required</em>
             </td>
           </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>pixel_resolution</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The separation between different elements in the PRF model in pixels. For example 0.25 means there will be approximately 0.25 pixels between each element.</p>
+              </div>
+            </td>
+            <td>
+                  <code>0.25</code>
+            </td>
+          </tr>
       </tbody>
     </table>
 
@@ -1094,7 +1154,7 @@
 
 
 <h2 id="pandoraaperture.prf.DispersedPRF.from_reference" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">from_reference</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">from_reference</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;nirda&#39;</span><span class="p">,</span> <span class="n">pixel_resolution</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -1132,7 +1192,22 @@
               </div>
             </td>
             <td>
-                <em>required</em>
+                  <code>&#39;nirda&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>pixel_resolution</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The separation between different elements in the PRF model in pixels. For example 0.25 means there will be approximately 0.25 pixels between each element.</p>
+              </div>
+            </td>
+            <td>
+                  <code>0.25</code>
             </td>
           </tr>
       </tbody>

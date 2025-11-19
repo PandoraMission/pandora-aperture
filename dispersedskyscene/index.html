@@ -358,6 +358,28 @@
   
   
     <li class="md-nav__item">
+      <a href="../prf-examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Example Usage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../prf/" class="md-nav__link">
         
   
@@ -462,6 +484,28 @@
             Scenes
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scene-examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Example Usage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -625,6 +669,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pandoraaperture.scene.DispersedSkyScene.evaluate" class="md-nav__link">
+    <span class="md-ellipsis">
+      evaluate
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pandoraaperture.scene.DispersedSkyScene.from_pointing" class="md-nav__link">
     <span class="md-ellipsis">
       from_pointing
@@ -664,6 +717,15 @@
   <a href="#pandoraaperture.scene.DispersedSkyScene.get_prf_hdu" class="md-nav__link">
     <span class="md-ellipsis">
       get_prf_hdu
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pandoraaperture.scene.DispersedSkyScene.plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      plot
     </span>
   </a>
   
@@ -783,6 +845,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pandoraaperture.scene.DispersedSkyScene.evaluate" class="md-nav__link">
+    <span class="md-ellipsis">
+      evaluate
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pandoraaperture.scene.DispersedSkyScene.from_pointing" class="md-nav__link">
     <span class="md-ellipsis">
       from_pointing
@@ -822,6 +893,15 @@
   <a href="#pandoraaperture.scene.DispersedSkyScene.get_prf_hdu" class="md-nav__link">
     <span class="md-ellipsis">
       get_prf_hdu
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pandoraaperture.scene.DispersedSkyScene.plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      plot
     </span>
   </a>
   
@@ -918,7 +998,7 @@
               </div>
             </td>
             <td>
-                <em>required</em>
+                  <code>&lt;Time object: scale=&#39;utc&#39; format=&#39;datetime&#39; value=2025-11-19 20:58:41.259857&gt;</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -1128,8 +1208,55 @@
 <div class="doc doc-object doc-function">
 
 
+<h2 id="pandoraaperture.scene.DispersedSkyScene.evaluate" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">evaluate</span><span class="p">(</span><span class="n">delta_pos</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Returns a dense image of the SkyScene</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>delta_pos</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Change in position in pixels. Use format (row, column).</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h2 id="pandoraaperture.scene.DispersedSkyScene.from_pointing" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">from_pointing</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">time</span><span class="o">=&lt;</span><span class="n">Time</span> <span class="nb">object</span><span class="p">:</span> <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;utc&#39;</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span> <span class="n">value</span><span class="o">=</span><span class="mi">2025</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">12</span> <span class="mi">22</span><span class="p">:</span><span class="mi">57</span><span class="p">:</span><span class="mf">33.561330</span><span class="o">&gt;</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">from_pointing</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">time</span><span class="o">=&lt;</span><span class="n">Time</span> <span class="nb">object</span><span class="p">:</span> <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;utc&#39;</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span> <span class="n">value</span><span class="o">=</span><span class="mi">2025</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">19</span> <span class="mi">20</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mf">41.260687</span><span class="o">&gt;</span><span class="p">)</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -1210,7 +1337,7 @@
               </div>
             </td>
             <td>
-                  <code>&lt;Time object: scale=&#39;utc&#39; format=&#39;datetime&#39; value=2025-11-12 22:57:33.561330&gt;</code>
+                  <code>&lt;Time object: scale=&#39;utc&#39; format=&#39;datetime&#39; value=2025-11-19 20:58:41.260687&gt;</code>
             </td>
           </tr>
       </tbody>
@@ -1525,6 +1652,23 @@
           </tr>
       </tbody>
     </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pandoraaperture.scene.DispersedSkyScene.plot" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Plots the SkyScene. Use this functon to visually inspect the SkyScene.</p>
 
     </div>
 
