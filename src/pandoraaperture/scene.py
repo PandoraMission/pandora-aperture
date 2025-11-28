@@ -207,7 +207,7 @@ class SkyScene(FITSMixins):
         """Gives the flux on the VDA. This can be updated with a reference product in the future...!"""
         # This is approximately the right flux for the VDA in electrons per second
         return (
-            np.nan_to_num(cat.phot_bp_mean_flux.values)
+            cat.phot_bp_mean_flux.fillna(0).values
             * 0.9
             * u.electron
             / u.second
@@ -216,7 +216,7 @@ class SkyScene(FITSMixins):
     def _get_NIRDAflux(self, cat):
         """Gives the flux on the NIRDA. This can be updated with a reference product in the future...!"""
         # This is approximately the right flux for the NIRDA in electrons per second
-        return np.nan_to_num(cat.j_flux.values * 1) * u.electron / u.second
+        return cat.j_flux.fillna(0).values * 1 * u.electron / u.second
 
     @property
     def VDAflux(self):
