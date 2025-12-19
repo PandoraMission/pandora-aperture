@@ -30,6 +30,13 @@ class SkyScene(FITSMixins):
     time: Time = Time.now()
     user_cat: pd.DataFrame = None
 
+    @property
+    def wcs_trimmed(self):
+        return self.wcs[
+            self.prf.imcorner[0] : self.prf.imshape[0] + self.prf.imcorner[0],
+            self.prf.imcorner[1] : self.prf.imshape[1] + self.prf.imcorner[1],
+        ]
+
     def __repr__(self):
         return "SkyScene"
 

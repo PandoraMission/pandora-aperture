@@ -54,7 +54,7 @@ class FITSMixins:
         if isinstance(target, SkyCoord):
             c = SkyCoord(self.cat.RA.values, self.cat.Dec.values, unit="deg")
             sep = c.separation(target).min().to(u.deg) / (
-                np.mean(np.abs(self.wcs.wcs.cdelt)) * u.deg / u.pixel
+                np.mean(np.abs(self.wcs_trimmed.wcs.cdelt)) * u.deg / u.pixel
             )
             if sep > (3 * u.pixel):
                 raise ValueError(
@@ -170,7 +170,7 @@ class FITSMixins:
     @property
     def wcs_cards(self):
         """Returns the WCS header as cards."""
-        return self.wcs.to_header(relax=True).cards
+        return self.wcs_trimmed.to_header(relax=True).cards
 
     @add_docstring(parameters=["delta_pos"])
     def get_model_hdu(self, delta_pos=None):
@@ -185,7 +185,9 @@ class FITSMixins:
         A = self.A(delta_pos=delta_pos)
         image = A.dot(self.flux.value)
         hdu = fits.CompImageHDU(
-            image, header=self.wcs.to_header(relax=True), name="MODEL_IMAGE"
+            image,
+            header=self.wcs_trimmed.to_header(relax=True),
+            name="MODEL_IMAGE",
         )
         hdu.header["IMSIZE0"] = (
             self.prf.imshape[0],
