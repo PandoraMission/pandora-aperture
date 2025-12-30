@@ -78,7 +78,7 @@ class FITSMixins:
         im2 = A.dot(self.flux.value)
         aper = im1 > threshold
 
-        hdu = fits.CompImageHDU(data=aper.astype(int))
+        hdu = fits.CompImageHDU(data=aper.astype(int), name="APERTURE")
         contamination = (im2 - im1)[aper].sum() / im1.sum()
         completeness = (im1)[aper].sum() / (self.flux[idx].value)
         total_in_aperture = (im1)[aper].sum()
@@ -97,6 +97,7 @@ class FITSMixins:
         )
         for attr in ["RA", "Dec", "row", "column"]:
             hdu.header[attr] = self.cat.iloc[idx][attr]
+        hdu.header["GAIA_ID"] = self.cat.iloc[idx]["source_id"]
         hdu.header["IMSIZE0"] = (
             self.prf.imshape[0],
             "Size of the full detector image in ROW",

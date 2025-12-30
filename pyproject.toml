@@ -1,6 +1,6 @@
 [project]
 name = "pandoraaperture"
-version = "0.1.2"
+version = "0.1.4"
 description = ""
 authors = [
     {name = "Christina Hedges",email = "christina.l.hedges@nasa.gov"}
