@@ -294,7 +294,12 @@ class SkyScene(FITSMixins):
         return self.X.subcol[0, 0] + np.round(delta_pos[1]).astype(int)
 
     @add_docstring(
-        parameters=["target", "delta_pos", "threshold"],
+        parameters=[
+            "target",
+            "delta_pos",
+            "relative_threshold",
+            "absolute_threshold",
+        ],
         returns=[
             "aperture",
             "contamination",
@@ -302,7 +307,13 @@ class SkyScene(FITSMixins):
             "total_in_aperture",
         ],
     )
-    def get_aperture(self, target, delta_pos=None, threshold=0.5):
+    def get_aperture(
+        self,
+        target,
+        delta_pos=None,
+        relative_threshold=0.005,
+        absolute_threshold=50,
+    ):
         """
         Obtain the aperture and aperture statistics for a particular target.
         """
@@ -331,7 +342,9 @@ class SkyScene(FITSMixins):
 
         im1 = A[:, :, idx].dot(np.ones(1) * self.flux[idx].value)
         im2 = A.dot(self.flux.value)
-        aper = im1 > threshold
+        aper = (im1 > absolute_threshold) & (
+            (im1 / self.flux[idx].value) > relative_threshold
+        )
 
         aper = aper.astype(bool)
         contamination = (im2 - im1)[aper].sum() / im1.sum()
@@ -340,7 +353,7 @@ class SkyScene(FITSMixins):
         return aper, contamination, completeness, total_in_aperture
 
     @add_docstring(
-        parameters=["delta_pos", "threshold"],
+        parameters=["delta_pos", "relative_threshold", "absolute_threshold"],
         returns=[
             "aperture",
             "contamination",
@@ -348,7 +361,9 @@ class SkyScene(FITSMixins):
             "total_in_aperture",
         ],
     )
-    def get_all_apertures(self, delta_pos=None, threshold=0.5):
+    def get_all_apertures(
+        self, delta_pos=None, relative_threshold=0.005, absolute_threshold=50
+    ):
         """
         Obtain the aperture and aperture statistics for all targets.
         """
@@ -361,7 +376,9 @@ class SkyScene(FITSMixins):
 
             im1 = A[:, :, idx].dot(np.ones(1) * self.flux[idx].value)
             im2 = A.dot(self.flux.value)
-            aper = im1 > threshold
+            aper = (im1 > absolute_threshold) & (
+                (im1 / self.flux[idx].value) > relative_threshold
+            )
 
             apers.append(aper.astype(bool))
             contamination[idx] = (im2 - im1)[aper].sum() / im1.sum()

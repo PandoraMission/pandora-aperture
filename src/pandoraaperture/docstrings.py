@@ -140,7 +140,11 @@ DOCSTRINGS = {
         "Indicates a target in the catalog. Use either in integer to express "
         "an index in the catalog, or a SkyCoord to find the closest target",
     ),
-    "threshold": (
+    "relative_threshold": (
+        float,
+        "Threshold to cut aperture off at in units of total source flux.",
+    ),
+    "absolute_threshold": (
         float,
         "Threshold to cut aperture off at, in units of electrons/s.",
     ),

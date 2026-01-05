@@ -41,8 +41,21 @@ class FITSMixins:
         ]
         return [fits.Card(*c) for c in cards]
 
-    @add_docstring(parameters=["target", "delta_pos", "threshold"])
-    def get_aperture_hdu(self, target, delta_pos=None, threshold=0.5):
+    @add_docstring(
+        parameters=[
+            "target",
+            "delta_pos",
+            "relative_threshold",
+            "absolute_threshold",
+        ]
+    )
+    def get_aperture_hdu(
+        self,
+        target,
+        delta_pos=None,
+        relative_threshold=0.005,
+        absolute_threshold=50,
+    ):
         """
         Obtain the aperture HDU.
 
@@ -74,7 +87,10 @@ class FITSMixins:
             idx = int(target)
         aper, contamination, completeness, total_in_aperture = (
             self.get_aperture(
-                target=idx, delta_pos=delta_pos, threshold=threshold
+                target=idx,
+                delta_pos=delta_pos,
+                relative_threshold=relative_threshold,
+                absolute_threshold=absolute_threshold,
             )
         )
         hdu = fits.CompImageHDU(data=aper.astype(int), name="APERTURE")
