@@ -694,6 +694,24 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pandoraaperture.scene.ROISkyScene.get_all_apertures" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_all_apertures
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pandoraaperture.scene.ROISkyScene.get_aperture" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_aperture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pandoraaperture.scene.ROISkyScene.get_aperture_hdu" class="md-nav__link">
     <span class="md-ellipsis">
       get_aperture_hdu
@@ -919,6 +937,24 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pandoraaperture.scene.ROISkyScene.get_all_apertures" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_all_apertures
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pandoraaperture.scene.ROISkyScene.get_aperture" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_aperture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pandoraaperture.scene.ROISkyScene.get_aperture_hdu" class="md-nav__link">
     <span class="md-ellipsis">
       get_aperture_hdu
@@ -1055,7 +1091,7 @@
               </div>
             </td>
             <td>
-                  <code>&lt;Time object: scale=&#39;utc&#39; format=&#39;datetime&#39; value=2025-12-30 20:29:19.766566&gt;</code>
+                  <code>&lt;Time object: scale=&#39;utc&#39; format=&#39;datetime&#39; value=2026-01-05 20:14:03.738704&gt;</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -1459,7 +1495,7 @@ Base 0 means to interpret the base from the string as an integer literal.</p>
 
 
 <h2 id="pandoraaperture.scene.ROISkyScene.from_pointing" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">from_pointing</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">nROIs</span><span class="p">,</span> <span class="n">ROI_corners</span><span class="p">,</span> <span class="n">ROI_size</span><span class="p">,</span> <span class="n">time</span><span class="o">=&lt;</span><span class="n">Time</span> <span class="nb">object</span><span class="p">:</span> <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;utc&#39;</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span> <span class="n">value</span><span class="o">=</span><span class="mi">2025</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">30</span> <span class="mi">20</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mf">19.767956</span><span class="o">&gt;</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">from_pointing</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">nROIs</span><span class="p">,</span> <span class="n">ROI_corners</span><span class="p">,</span> <span class="n">ROI_size</span><span class="p">,</span> <span class="n">time</span><span class="o">=&lt;</span><span class="n">Time</span> <span class="nb">object</span><span class="p">:</span> <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;utc&#39;</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span> <span class="n">value</span><span class="o">=</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">05</span> <span class="mi">20</span><span class="p">:</span><span class="mi">14</span><span class="p">:</span><span class="mf">03.740103</span><span class="o">&gt;</span><span class="p">)</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -1540,7 +1576,7 @@ Base 0 means to interpret the base from the string as an integer literal.</p>
               </div>
             </td>
             <td>
-                  <code>&lt;Time object: scale=&#39;utc&#39; format=&#39;datetime&#39; value=2025-12-30 20:29:19.767956&gt;</code>
+                  <code>&lt;Time object: scale=&#39;utc&#39; format=&#39;datetime&#39; value=2026-01-05 20:14:03.740103&gt;</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -1586,6 +1622,251 @@ Base 0 means to interpret the base from the string as an integer literal.</p>
             </td>
             <td>
                 <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pandoraaperture.scene.ROISkyScene.get_all_apertures" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_all_apertures</span><span class="p">(</span><span class="n">delta_pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Obtain the aperture and aperture statistics for all targets.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>delta_pos</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Change in position in pixels. Use format (row, column).</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>threshold</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Threshold to cut aperture off at, in units of electrons/s.</p>
+              </div>
+            </td>
+            <td>
+                  <code>0.5</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>aperture</code></td>            <td>
+                  <code><span title="ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Array of bools that shows which pixels are considered to be part of the target.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>contamination</code></td>            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Value showing how much of the flux in the aperture is due to other sources/the amount of flux inside the aperture.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>completeness</code></td>            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Value showing how much of the target flux is inside the aperture/total expected flux.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>total_in_aperture</code></td>            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Value showing how much flux is inside the aperture.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pandoraaperture.scene.ROISkyScene.get_aperture" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_aperture</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">delta_pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Obtain the aperture and aperture statistics for a particular target.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>target</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Indicates a target in the catalog. Use either in integer to express an index in the catalog, or a SkyCoord to find the closest target</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>delta_pos</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Change in position in pixels. Use format (row, column).</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>threshold</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Threshold to cut aperture off at, in units of electrons/s.</p>
+              </div>
+            </td>
+            <td>
+                  <code>0.5</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>aperture</code></td>            <td>
+                  <code><span title="ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Array of bools that shows which pixels are considered to be part of the target.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>contamination</code></td>            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Value showing how much of the flux in the aperture is due to other sources/the amount of flux inside the aperture.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>completeness</code></td>            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Value showing how much of the target flux is inside the aperture/total expected flux.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>total_in_aperture</code></td>            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Value showing how much flux is inside the aperture.</p>
+              </div>
             </td>
           </tr>
       </tbody>
