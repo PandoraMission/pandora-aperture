@@ -53,7 +53,13 @@ class SkyScene(FITSMixins):
             cat.column.values
             < (self.prf.imcorner[1] + self.prf.imshape[1] + self.pixel_buffer)
         )
-        return cat[k].reset_index(drop=True)
+        new_cat = cat[k].reset_index(drop=True)
+        center = np.asarray(self.imcorner) + np.asarray(self.imshape) / 2
+        dist = (
+            (new_cat.row.values - center[0]) ** 2
+            + (new_cat.column.values - center[1]) ** 2
+        ) ** 0.5
+        return new_cat.iloc[np.argsort(dist)].reset_index(drop=True)
 
     @add_docstring(parameters=["coord", "radius"], returns=["cat"])
     def _get_catalog_from_radec(self, coord, radius: float = 1):
@@ -410,11 +416,11 @@ class DispersedSkyScene(SkyScene):
         )
         k &= self._get_NIRDAflux(cat) > (1000 * u.electron / u.second)
         new_cat = cat[k].reset_index(drop=True)
-        dist = np.sqrt(
-            (np.asarray(new_cat.RA.values, float) - self.wcs.wcs.crval[0]) ** 2
-            + (np.asarray(new_cat.Dec.values, float) - self.wcs.wcs.crval[1])
-            ** 2
-        )
+        center = np.asarray(self.imcorner) + np.asarray(self.imshape) / 2
+        dist = (
+            (new_cat.row.values - center[0]) ** 2
+            + (new_cat.column.values - center[1]) ** 2
+        ) ** 0.5
         return new_cat.iloc[np.argsort(dist)].reset_index(drop=True)
 
     def _get_X(self):
@@ -529,7 +535,13 @@ class ROISkyScene(SkyScene):
                     )
                 )
             )
-        return cat[k].reset_index(drop=True)
+        new_cat = cat[k].reset_index(drop=True)
+        center = np.asarray(self.imcorner) + np.asarray(self.imshape) / 2
+        dist = (
+            (new_cat.row.values - center[0]) ** 2
+            + (new_cat.column.values - center[1]) ** 2
+        ) ** 0.5
+        return new_cat.iloc[np.argsort(dist)].reset_index(drop=True)
 
     @add_docstring(parameters=["delta_pos"])
     def evaluate(self, delta_pos=None):
