@@ -287,6 +287,87 @@ class SkyScene(FITSMixins):
             delta_pos = (0, 0)
         return self.X.subcol[0, 0] + np.round(delta_pos[1]).astype(int)
 
+    @add_docstring(
+        parameters=["target", "delta_pos", "threshold"],
+        returns=[
+            "aperture",
+            "contamination",
+            "completeness",
+            "total_in_aperture",
+        ],
+    )
+    def get_aperture(self, target, delta_pos=None, threshold=0.5):
+        """
+        Obtain the aperture and aperture statistics for a particular target.
+        """
+        if isinstance(target, SkyCoord):
+            c = SkyCoord(self.cat.RA.values, self.cat.Dec.values, unit="deg")
+            sep = c.separation(target).min().to(u.deg) / (
+                np.mean(np.abs(self.wcs_trimmed.wcs.cdelt)) * u.deg / u.pixel
+            )
+            if sep > (3 * u.pixel):
+                raise ValueError(
+                    "No matching target in catalog, try updating the catalog."
+                )
+            idx = int(c.separation(target).argmin())
+            # target = SkyCoord(self.cat.RA.values[idx], self.cat.Dec.values[idx], unit='deg')
+        elif isinstance(target, str):
+            loc = self.cat.source_id.isin([target]).values
+            if not loc.any():
+                raise ValueError(
+                    "No matching target in catalog, try updating the catalog."
+                )
+            idx = int(np.where(loc)[0][0])
+            # target = SkyCoord(self.cat.RA.values[idx], self.cat.Dec.values[idx], unit='deg')
+        elif isinstance(target, (int, np.int64)):
+            idx = int(target)
+        A = self.A(delta_pos=delta_pos)
+
+        im1 = A[:, :, idx].dot(np.ones(1) * self.flux[idx].value)
+        im2 = A.dot(self.flux.value)
+        aper = im1 > threshold
+
+        aper = aper.astype(bool)
+        contamination = (im2 - im1)[aper].sum() / im1.sum()
+        completeness = (im1)[aper].sum() / (self.flux[idx].value)
+        total_in_aperture = (im1)[aper].sum()
+        return aper, contamination, completeness, total_in_aperture
+
+    @add_docstring(
+        parameters=["delta_pos", "threshold"],
+        returns=[
+            "aperture",
+            "contamination",
+            "completeness",
+            "total_in_aperture",
+        ],
+    )
+    def get_all_apertures(self, delta_pos=None, threshold=0.5):
+        """
+        Obtain the aperture and aperture statistics for all targets.
+        """
+        apers = []
+        contamination, completeness, total_in_aperture = np.zeros(
+            (3, len(self.cat))
+        )
+        for idx in range(len(self.cat)):
+            A = self.A(delta_pos=delta_pos)
+
+            im1 = A[:, :, idx].dot(np.ones(1) * self.flux[idx].value)
+            im2 = A.dot(self.flux.value)
+            aper = im1 > threshold
+
+            apers.append(aper.astype(bool))
+            contamination[idx] = (im2 - im1)[aper].sum() / im1.sum()
+            completeness[idx] = (im1)[aper].sum() / (self.flux[idx].value)
+            total_in_aperture[idx] = (im1)[aper].sum()
+        return (
+            np.asarray(apers),
+            contamination,
+            completeness,
+            total_in_aperture,
+        )
+
 
 @add_docstring(parameters=["prf", "wcs", "time", "user_cat"])
 @dataclass()
@@ -328,7 +409,13 @@ class DispersedSkyScene(SkyScene):
             )
         )
         k &= self._get_NIRDAflux(cat) > (1000 * u.electron / u.second)
-        return cat[k].reset_index(drop=True)
+        new_cat = cat[k].reset_index(drop=True)
+        dist = np.sqrt(
+            (np.asarray(new_cat.RA.values, float) - self.wcs.wcs.crval[0]) ** 2
+            + (np.asarray(new_cat.Dec.values, float) - self.wcs.wcs.crval[1])
+            ** 2
+        )
+        return new_cat.iloc[np.argsort(dist)].reset_index(drop=True)
 
     def _get_X(self):
         """Hidden method to obtain the PRF matrices."""

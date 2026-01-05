@@ -72,17 +72,12 @@ class FITSMixins:
             # target = SkyCoord(self.cat.RA.values[idx], self.cat.Dec.values[idx], unit='deg')
         elif isinstance(target, (int, np.int64)):
             idx = int(target)
-        A = self.A(delta_pos=delta_pos)
-
-        im1 = A[:, :, idx].dot(np.ones(1) * self.flux[idx].value)
-        im2 = A.dot(self.flux.value)
-        aper = im1 > threshold
-
+        aper, contamination, completeness, total_in_aperture = (
+            self.get_aperture(
+                target=idx, delta_pos=delta_pos, threshold=threshold
+            )
+        )
         hdu = fits.CompImageHDU(data=aper.astype(int), name="APERTURE")
-        contamination = (im2 - im1)[aper].sum() / im1.sum()
-        completeness = (im1)[aper].sum() / (self.flux[idx].value)
-        total_in_aperture = (im1)[aper].sum()
-
         hdu.header["CONTAM"] = (
             contamination,
             "Flux not from the target in aperture in e/s",

@@ -152,6 +152,22 @@ DOCSTRINGS = {
         "The separation between different elements in the PRF model in pixels. For example 0.25"
         " means there will be approximately 0.25 pixels between each element.",
     ),
+    "aperture": (
+        npt.NDArray,
+        "Array of bools that shows which pixels are considered to be part of the target.",
+    ),
+    "contamination": (
+        float,
+        "Value showing how much of the flux in the aperture is due to other sources/the amount of flux inside the aperture.",
+    ),
+    "completeness": (
+        float,
+        "Value showing how much of the target flux is inside the aperture/total expected flux.",
+    ),
+    "total_in_aperture": (
+        float,
+        "Value showing how much flux is inside the aperture.",
+    ),
 }
 
 
