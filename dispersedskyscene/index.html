@@ -1035,7 +1035,7 @@
               </div>
             </td>
             <td>
-                  <code>&lt;Time object: scale=&#39;utc&#39; format=&#39;datetime&#39; value=2026-01-05 20:23:09.622394&gt;</code>
+                  <code>&lt;Time object: scale=&#39;utc&#39; format=&#39;datetime&#39; value=2026-01-05 20:33:44.699071&gt;</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -1293,7 +1293,7 @@
 
 
 <h2 id="pandoraaperture.scene.DispersedSkyScene.from_pointing" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">from_pointing</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">time</span><span class="o">=&lt;</span><span class="n">Time</span> <span class="nb">object</span><span class="p">:</span> <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;utc&#39;</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span> <span class="n">value</span><span class="o">=</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">05</span> <span class="mi">20</span><span class="p">:</span><span class="mi">23</span><span class="p">:</span><span class="mf">09.623323</span><span class="o">&gt;</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">from_pointing</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">time</span><span class="o">=&lt;</span><span class="n">Time</span> <span class="nb">object</span><span class="p">:</span> <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;utc&#39;</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span> <span class="n">value</span><span class="o">=</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">05</span> <span class="mi">20</span><span class="p">:</span><span class="mi">33</span><span class="p">:</span><span class="mf">44.699980</span><span class="o">&gt;</span><span class="p">)</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -1374,7 +1374,7 @@
               </div>
             </td>
             <td>
-                  <code>&lt;Time object: scale=&#39;utc&#39; format=&#39;datetime&#39; value=2026-01-05 20:23:09.623323&gt;</code>
+                  <code>&lt;Time object: scale=&#39;utc&#39; format=&#39;datetime&#39; value=2026-01-05 20:33:44.699980&gt;</code>
             </td>
           </tr>
       </tbody>
@@ -1388,7 +1388,7 @@
 
 
 <h2 id="pandoraaperture.scene.DispersedSkyScene.get_all_apertures" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">get_all_apertures</span><span class="p">(</span><span class="n">delta_pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">get_all_apertures</span><span class="p">(</span><span class="n">delta_pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">relative_threshold</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">absolute_threshold</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span></code>
 
 </h2>
 
@@ -1426,7 +1426,22 @@
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>threshold</code>
+                <code>relative_threshold</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Threshold to cut aperture off at in units of total source flux.</p>
+              </div>
+            </td>
+            <td>
+                  <code>0.005</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>absolute_threshold</code>
             </td>
             <td>
             </td>
@@ -1436,7 +1451,7 @@
               </div>
             </td>
             <td>
-                  <code>0.5</code>
+                  <code>50</code>
             </td>
           </tr>
       </tbody>
@@ -1503,7 +1518,7 @@
 
 
 <h2 id="pandoraaperture.scene.DispersedSkyScene.get_aperture" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">get_aperture</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">delta_pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">get_aperture</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">delta_pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">relative_threshold</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">absolute_threshold</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span></code>
 
 </h2>
 
@@ -1556,7 +1571,22 @@
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>threshold</code>
+                <code>relative_threshold</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Threshold to cut aperture off at in units of total source flux.</p>
+              </div>
+            </td>
+            <td>
+                  <code>0.005</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>absolute_threshold</code>
             </td>
             <td>
             </td>
@@ -1566,7 +1596,7 @@
               </div>
             </td>
             <td>
-                  <code>0.5</code>
+                  <code>50</code>
             </td>
           </tr>
       </tbody>
@@ -1633,7 +1663,7 @@
 
 
 <h2 id="pandoraaperture.scene.DispersedSkyScene.get_aperture_hdu" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">get_aperture_hdu</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">delta_pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">get_aperture_hdu</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">delta_pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">relative_threshold</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">absolute_threshold</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span></code>
 
 </h2>
 
@@ -1709,7 +1739,22 @@
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>threshold</code>
+                <code>relative_threshold</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Threshold to cut aperture off at in units of total source flux.</p>
+              </div>
+            </td>
+            <td>
+                  <code>0.005</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>absolute_threshold</code>
             </td>
             <td>
             </td>
@@ -1719,7 +1764,7 @@
               </div>
             </td>
             <td>
-                  <code>0.5</code>
+                  <code>50</code>
             </td>
           </tr>
       </tbody>
