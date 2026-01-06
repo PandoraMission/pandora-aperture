@@ -15,7 +15,7 @@ from astropy.io import fits
 from astropy.table import Table
 from gaiaoffline import __version__ as gaiaofflineversion
 
-from . import __version__
+from . import __version__, logger
 from .docstrings import add_docstring
 
 
@@ -70,18 +70,20 @@ class FITSMixins:
                 np.mean(np.abs(self.wcs_trimmed.wcs.cdelt)) * u.deg / u.pixel
             )
             if sep > (3 * u.pixel):
-                raise ValueError(
-                    "No matching target in catalog, try updating the catalog."
+                logger.warning(
+                    "No matching target in catalog, finding the closest target, try updating the catalog or checking your RA/Dec."
                 )
             idx = int(c.separation(target).argmin())
             # target = SkyCoord(self.cat.RA.values[idx], self.cat.Dec.values[idx], unit='deg')
         elif isinstance(target, str):
             loc = self.cat.source_id.isin([target]).values
             if not loc.any():
-                raise ValueError(
-                    "No matching target in catalog, try updating the catalog."
+                logger.warning(
+                    "No matching target in catalog, choosing the most central target, try updating the catalog or checking your RA/Dec."
                 )
-            idx = int(np.where(loc)[0][0])
+                idx = 0
+            else:
+                idx = int(np.where(loc)[0][0])
             # target = SkyCoord(self.cat.RA.values[idx], self.cat.Dec.values[idx], unit='deg')
         elif isinstance(target, (int, np.int64)):
             idx = int(target)
