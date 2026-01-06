@@ -140,7 +140,7 @@ class FITSMixins:
             FITS HDU containing the catalog of all sources that will land on pixels.
         """
         with pd.option_context("future.no_silent_downcasting", True):
-            cat = self.cat.copy().fillna(0).infer_objects(copy=True)
+            cat = self.cat.copy().infer_objects(copy=True)
         if delta_pos is None:
             delta_pos = (0, 0)
         cat["row"] += delta_pos[0]
