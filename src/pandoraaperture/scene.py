@@ -87,14 +87,14 @@ class SkyScene(FITSMixins):
             cat_coord = SkyCoord(
                 ra=df["ra"].values * u.deg,
                 dec=df["dec"].values * u.deg,
-                pm_ra_cosdec=df.pmra.fillna(0).values * u.mas / u.year,
-                pm_dec=df.pmdec.fillna(0).values * u.mas / u.year,
+                pm_ra_cosdec=np.nan_to_num(df.pmra.values, 0) * u.mas / u.year,
+                pm_dec=np.nan_to_num(df.pmdec.values, 0) * u.mas / u.year,
                 obstime=Time.strptime("2016", "%Y"),
                 distance=Distance(
-                    parallax=df.parallax.fillna(0).values * u.mas,
+                    parallax=np.nan_to_num(df.parallax.values, 0) * u.mas,
                     allow_negative=True,
                 ),
-                radial_velocity=df.radial_velocity.fillna(0).values
+                radial_velocity=np.nan_to_num(df.radial_velocity.values, 0)
                 * u.km
                 / u.s,
             ).apply_space_motion(self.time)
@@ -220,7 +220,7 @@ class SkyScene(FITSMixins):
         """Gives the flux on the VDA. This can be updated with a reference product in the future...!"""
         # This is approximately the right flux for the VDA in electrons per second
         return (
-            cat.phot_bp_mean_flux.fillna(0).values
+            np.nan_to_num(cat.phot_bp_mean_flux.values, 0)
             * 0.9
             * u.electron
             / u.second
@@ -229,7 +229,7 @@ class SkyScene(FITSMixins):
     def _get_NIRDAflux(self, cat):
         """Gives the flux on the NIRDA. This can be updated with a reference product in the future...!"""
         # This is approximately the right flux for the NIRDA in electrons per second
-        return cat.j_flux.fillna(0).values * 1 * u.electron / u.second
+        return np.nan_to_num(cat.j_flux.values, 0) * 1 * u.electron / u.second
 
     @property
     def VDAflux(self):
