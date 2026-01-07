@@ -47,9 +47,7 @@ class SkyScene(FITSMixins):
             cat.row.values
             < (self.prf.imcorner[0] + self.prf.imshape[0] + self.pixel_buffer)
         )
-        k &= (
-            cat.column.values > (self.prf.imcorner[1] - self.pixel_buffer)
-        ) & (
+        k &= (cat.column.values > (self.prf.imcorner[1] - self.pixel_buffer)) & (
             cat.column.values
             < (self.prf.imcorner[1] + self.prf.imshape[1] + self.pixel_buffer)
         )
@@ -79,9 +77,7 @@ class SkyScene(FITSMixins):
         if self.user_cat is not None:
             df = pd.concat([df, self.user_cat])
         if len(df) == 0:
-            return pd.DataFrame(
-                columns=["RA", "Dec", *self.cols, "row", "column"]
-            )
+            return pd.DataFrame(columns=["RA", "Dec", *self.cols, "row", "column"])
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             cat_coord = SkyCoord(
@@ -135,9 +131,7 @@ class SkyScene(FITSMixins):
             c1 += self.prf.trace_row.value.min()
             c2 += self.prf.trace_row.value.max()
         radius = np.max(
-            self.wcs.pixel_to_world(
-                [c1, c1, c2, c2], [r1, r2, r1, r2]
-            ).separation(c)
+            self.wcs.pixel_to_world([c1, c1, c2, c2], [r1, r2, r1, r2]).separation(c)
         )
 
         return self._get_catalog_from_radec(c, radius=radius.deg)
@@ -149,9 +143,7 @@ class SkyScene(FITSMixins):
 
     def _get_X(self):
         """Hidden method to obtain the PRF matrices."""
-        cat = self._get_catalog_from_pixelbox(
-            self.prf.imcorner, self.prf.imshape
-        )
+        cat = self._get_catalog_from_pixelbox(self.prf.imcorner, self.prf.imshape)
         X, dX0, dX1 = [], [], []
         for r, c in cat[["row", "column"]].values:
             x, dx0, dx1 = self._get_sparse_matrix((r, c))
@@ -170,9 +162,7 @@ class SkyScene(FITSMixins):
                 raise ValueError("`user_cat` must be a `pandas.DataFrame`.")
             for attr in ["ra", "dec", *self.cols]:
                 if attr not in self.user_cat.columns:
-                    raise ValueError(
-                        f"`user_cat` must have the column `{attr}`"
-                    )
+                    raise ValueError(f"`user_cat` must have the column `{attr}`")
         return
 
     def __post_init__(self):
@@ -220,10 +210,7 @@ class SkyScene(FITSMixins):
         """Gives the flux on the VDA. This can be updated with a reference product in the future...!"""
         # This is approximately the right flux for the VDA in electrons per second
         return (
-            np.nan_to_num(cat.phot_bp_mean_flux.values, 0)
-            * 0.9
-            * u.electron
-            / u.second
+            np.nan_to_num(cat.phot_bp_mean_flux.values, 0) * 0.9 * u.electron / u.second
         )
 
     def _get_NIRDAflux(self, cat):
@@ -368,9 +355,7 @@ class SkyScene(FITSMixins):
         Obtain the aperture and aperture statistics for all targets.
         """
         apers = []
-        contamination, completeness, total_in_aperture = np.zeros(
-            (3, len(self.cat))
-        )
+        contamination, completeness, total_in_aperture = np.zeros((3, len(self.cat)))
         for idx in range(len(self.cat)):
             A = self.A(delta_pos=delta_pos)
 
@@ -400,40 +385,21 @@ class DispersedSkyScene(SkyScene):
     @add_docstring(parameters=["cat"])
     def _clean_catalog(self, cat):
         """Hidden method that returns a cleaned version of a catalog."""
-        length = (
-            self.prf.trace_row.value.max() - self.prf.trace_row.value.min()
-        )
-        k = (
+        length = self.prf.trace_row.value.max() - self.prf.trace_row.value.min()
+        k = (cat.row.values > (self.prf.imcorner[0] - length - self.pixel_buffer)) & (
             cat.row.values
-            > (self.prf.imcorner[0] - length - self.pixel_buffer)
-        ) & (
-            cat.row.values
-            < (
-                self.prf.imcorner[0]
-                + self.prf.imshape[0]
-                + length
-                + self.pixel_buffer
-            )
+            < (self.prf.imcorner[0] + self.prf.imshape[0] + length + self.pixel_buffer)
         )
         # Pandora NIR side has a physical block on certain regions so we'll remove any part of the catalog that has sources in those regions
         k &= cat.row.values > (512 - length - self.pixel_buffer)
-        k &= cat.row.values < ((1024 + 512) - length - self.pixel_buffer)
+        k &= cat.row.values < ((1024 + 512) + length + self.pixel_buffer)
 
-        length = (
-            self.prf.trace_column.value.max()
-            - self.prf.trace_column.value.min()
-        )
+        length = self.prf.trace_column.value.max() - self.prf.trace_column.value.min()
         k &= (
-            cat.column.values
-            > (self.prf.imcorner[1] - length - self.pixel_buffer)
+            cat.column.values > (self.prf.imcorner[1] - length - self.pixel_buffer)
         ) & (
             cat.column.values
-            < (
-                self.prf.imcorner[1]
-                + self.prf.imshape[1]
-                + length
-                + self.pixel_buffer
-            )
+            < (self.prf.imcorner[1] + self.prf.imshape[1] + length + self.pixel_buffer)
         )
 
         # Pandora NIR side has a physical block on certain regions so we'll remove any part of the catalog that has sources in those regions
@@ -451,9 +417,7 @@ class DispersedSkyScene(SkyScene):
 
     def _get_X(self):
         """Hidden method to obtain the PRF matrices."""
-        cat = self._get_catalog_from_pixelbox(
-            self.prf.imcorner, self.prf.imshape
-        )
+        cat = self._get_catalog_from_pixelbox(self.prf.imcorner, self.prf.imshape)
         R, C = np.mgrid[
             self.prf.imcorner[0] : self.prf.imcorner[0] + self.prf.imshape[0],
             self.prf.imcorner[1] : self.prf.imcorner[1] + self.prf.imshape[1],
@@ -484,14 +448,10 @@ class DispersedSkyScene(SkyScene):
             raise ValueError("Must pass `DispersedPRF`.")
         self.pixel_buffer = int(config["SETTINGS"]["pixel_buffer"])
         self.cols = config["SETTINGS"]["catalog_columns"].split(", ")
-        self._spectrum_norm = (
-            NIRDAReference.get_spectrum_normalization_per_pixel(
-                self.prf.trace_row.value
-            )
+        self._spectrum_norm = NIRDAReference.get_spectrum_normalization_per_pixel(
+            self.prf.trace_row.value
         )
-        self._spectrum_norm /= np.trapz(
-            self._spectrum_norm, self.prf.trace_row.value
-        )
+        self._spectrum_norm /= np.trapz(self._spectrum_norm, self.prf.trace_row.value)
         self._check_user_cat()
         self.X, self.dX0, self.dX1, self.cat = self._get_X()
 
@@ -536,29 +496,15 @@ class ROISkyScene(SkyScene):
         k = np.zeros(len(cat), bool)
         for idx in range(self.nROIs):
             k |= (
-                (
-                    cat.row.values
-                    > (self.ROI_corners[idx][0] - self.pixel_buffer)
-                )
+                (cat.row.values > (self.ROI_corners[idx][0] - self.pixel_buffer))
                 & (
                     cat.row.values
-                    < (
-                        self.ROI_corners[idx][0]
-                        + self.ROI_size[0]
-                        + self.pixel_buffer
-                    )
+                    < (self.ROI_corners[idx][0] + self.ROI_size[0] + self.pixel_buffer)
                 )
+                & (cat.column.values > (self.ROI_corners[idx][1] - self.pixel_buffer))
                 & (
                     cat.column.values
-                    > (self.ROI_corners[idx][1] - self.pixel_buffer)
-                )
-                & (
-                    cat.column.values
-                    < (
-                        self.ROI_corners[idx][1]
-                        + self.ROI_size[1]
-                        + self.pixel_buffer
-                    )
+                    < (self.ROI_corners[idx][1] + self.ROI_size[1] + self.pixel_buffer)
                 )
             )
         new_cat = cat[k].reset_index(drop=True)
@@ -617,9 +563,7 @@ class ROISkyScene(SkyScene):
             ]
 
         else:
-            return self.prf.to_sparse3d(
-                location, gradients=gradients
-            ).to_ROISparse3D(
+            return self.prf.to_sparse3d(location, gradients=gradients).to_ROISparse3D(
                 nROIs=self.nROIs,
                 ROI_size=self.ROI_size,
                 ROI_corners=self.ROI_corners,
