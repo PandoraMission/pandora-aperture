@@ -415,6 +415,10 @@ class DispersedSkyScene(SkyScene):
                 + self.pixel_buffer
             )
         )
+        # Pandora NIR side has a physical block on certain regions so we'll remove any part of the catalog that has sources in those regions
+        k &= cat.row.values > (512 - length - self.pixel_buffer)
+        k &= cat.row.values < ((1024 + 512) - length - self.pixel_buffer)
+
         length = (
             self.prf.trace_column.value.max()
             - self.prf.trace_column.value.min()
@@ -431,7 +435,12 @@ class DispersedSkyScene(SkyScene):
                 + self.pixel_buffer
             )
         )
-        k &= self._get_NIRDAflux(cat) > (1000 * u.electron / u.second)
+
+        # Pandora NIR side has a physical block on certain regions so we'll remove any part of the catalog that has sources in those regions
+        k &= cat.column.values > ((1024 + 256) - length - self.pixel_buffer)
+
+        # Faint sources are a waste of compute
+        k &= self._get_NIRDAflux(cat) > (500 * u.electron / u.second)
         new_cat = cat[k].reset_index(drop=True)
         center = np.asarray(self.imcorner) + np.asarray(self.imshape) / 2
         dist = (
