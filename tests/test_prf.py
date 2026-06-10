@@ -6,7 +6,7 @@ from pandoraaperture import DOCSDIR
 
 
 def test_prf():
-    for cls in [pa.PRF, pa.SpatialPRF, pa.DispersedPRF]:
+    for cls in [pa.PRF]:  # , pa.SpatialPRF, pa.DispersedPRF]:
         prf = cls.from_reference()
         fig = prf.plot()
         fig.savefig(

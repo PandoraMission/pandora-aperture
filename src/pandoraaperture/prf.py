@@ -149,9 +149,10 @@ class PRF(object):
         if name.lower() in ["v", "vis", "vda", "visda"]:
             file = VISDAReference.prf_file
         elif name.lower() in ["n", "nir", "nirda", "ir"]:
-            raise ValueError(
-                f"Can not open NIRDA PRF with class `{cls.__name__}`. Try a `DispersedPRF`."
-            )
+            # raise ValueError(
+            #     f"Can not open NIRDA PRF with class `{cls.__name__}`. Try a `DispersedPRF`."
+            # )
+            file = NIRDAReference.prf_file
         else:
             raise ValueError(
                 f"Can not parse PRF name '{name}', please select a different name."
@@ -310,7 +311,7 @@ class PRF(object):
         )
         cmap = kwargs.pop("cmap", "viridis")
         vmin = kwargs.pop("vmin", 0)
-        vmax = kwargs.pop("vmax", 0.01)
+        vmax = kwargs.pop("vmax", np.nanmax(self.flux))
         im = ax.pcolormesh(
             self.column.value,
             self.row.value,
@@ -319,7 +320,12 @@ class PRF(object):
             vmin=vmin,
             vmax=vmax,
         )
-        ax.set(xlabel="Pixel Column", ylabel="Pixel Row", title="PRF")
+        ax.set(
+            xlabel="Pixel Column",
+            ylabel="Pixel Row",
+            title="PRF",
+            aspect="equal",
+        )
         cbar = plt.colorbar(im, ax=ax)
         cbar.set_label("PRF")
         return fig
@@ -457,6 +463,7 @@ class SpatialPRF(PRF):
             sharex=True,
             sharey=True,
         )
+        ax = np.atleast_2d(ax)
         cmap = kwargs.pop("cmap", "viridis")
         vmin = kwargs.pop("vmin", 0)
         vmax = kwargs.pop("vmax", 0.01)

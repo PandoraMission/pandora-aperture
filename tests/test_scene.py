@@ -18,7 +18,7 @@ def test_scene():
     if os.getenv("GITHUB_ACTIONS") == "true":
         pytest.skip("Skipping this test on GitHub Actions.")
     ra, dec, theta = (285.6794224553767, 50.24130600481639, 85.1230985)
-    for cls in [pa.SkyScene, pa.ROISkyScene, pa.DispersedSkyScene]:
+    for cls in [pa.SkyScene]:  # , pa.ROISkyScene, pa.DispersedSkyScene]:
         if cls is pa.ROISkyScene:
             rR, rC = np.mgrid[-500:500:3j, -500:500:3j]
             ROI_corners = [

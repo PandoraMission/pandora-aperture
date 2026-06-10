@@ -70,7 +70,7 @@ def reset_config():
         "log_level": "WARNING",
         "data_dir": user_data_dir("pandoraaperture"),
         "pixel_buffer": 15,
-        "catalog_columns": "source_id, phot_g_mean_flux, phot_bp_mean_flux, phot_rp_mean_flux, j_flux, h_flux, k_flux, teff_gspphot",
+        "catalog_columns": "source_id, phot_g_mean_mag, phot_bp_mean_mag, phot_rp_mean_mag, j_m, h_m, k_m, teff_gspphot",
     }
     with open(CONFIGPATH, "w") as configfile:
         config.write(configfile)

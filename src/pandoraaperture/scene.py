@@ -72,7 +72,9 @@ class SkyScene(FITSMixins):
         else:
             raise TypeError("`coord` must be SkyCoord or (ra, dec) tuple")
         radius = u.Quantity(radius, u.deg)
-        with Gaia(photometry_output="flux", tmass_crossmatch=True) as gaia:
+        with Gaia(
+            photometry_output="magnitude", tmass_crossmatch=True
+        ) as gaia:
             df = gaia.conesearch(coord.ra.deg, coord.dec.deg, radius.value)
             # The integers are too hard to coerce everywhere
             df["source_id"] = df.source_id.astype(str)
@@ -87,14 +89,14 @@ class SkyScene(FITSMixins):
             cat_coord = SkyCoord(
                 ra=df["ra"].values * u.deg,
                 dec=df["dec"].values * u.deg,
-                pm_ra_cosdec=np.nan_to_num(df.pmra.values, 0) * u.mas / u.year,
-                pm_dec=np.nan_to_num(df.pmdec.values, 0) * u.mas / u.year,
+                pm_ra_cosdec=df.pmra.fillna(0).values * u.mas / u.year,
+                pm_dec=df.pmdec.fillna(0).values * u.mas / u.year,
                 obstime=Time.strptime("2016", "%Y"),
                 distance=Distance(
-                    parallax=np.nan_to_num(df.parallax.values, 0) * u.mas,
+                    parallax=df.parallax.fillna(0).values * u.mas,
                     allow_negative=True,
                 ),
-                radial_velocity=np.nan_to_num(df.radial_velocity.values, 0)
+                radial_velocity=df.radial_velocity.fillna(0).values
                 * u.km
                 / u.s,
             ).apply_space_motion(self.time)
@@ -130,10 +132,10 @@ class SkyScene(FITSMixins):
 
         # add buffer here for DispersedPRF
         if isinstance(self.prf, DispersedPRF):
-            r1 += self.prf.trace_column.value.min()
-            r2 += self.prf.trace_column.value.max()
-            c1 += self.prf.trace_row.value.min()
-            c2 += self.prf.trace_row.value.max()
+            r1 += self.prf.trace_column.value.min() - 50
+            r2 += self.prf.trace_column.value.max() + 50
+            c1 += self.prf.trace_row.value.min() - 50
+            c2 += self.prf.trace_row.value.max() + 50
         radius = np.max(
             self.wcs.pixel_to_world(
                 [c1, c1, c2, c2], [r1, r2, r1, r2]
@@ -221,17 +223,14 @@ class SkyScene(FITSMixins):
     def _get_VDAflux(self, cat):
         """Gives the flux on the VDA. This can be updated with a reference product in the future...!"""
         # This is approximately the right flux for the VDA in electrons per second
-        return (
-            np.nan_to_num(cat.phot_bp_mean_flux.values, 0)
-            * 0.9
-            * u.electron
-            / u.second
+        return np.nan_to_num(
+            VISDAReference.magnitude_to_flux(cat.phot_bp_mean_mag.values)
         )
 
     def _get_NIRDAflux(self, cat):
         """Gives the flux on the NIRDA. This can be updated with a reference product in the future...!"""
         # This is approximately the right flux for the NIRDA in electrons per second
-        return np.nan_to_num(cat.j_flux.values, 0) * 1 * u.electron / u.second
+        return np.nan_to_num(VISDAReference.magnitude_to_flux(cat.j_m.values))
 
     @property
     def VDAflux(self):
@@ -252,10 +251,25 @@ class SkyScene(FITSMixins):
 
     @classmethod
     @add_docstring(parameters=["ra", "dec", "theta", "time"])
-    def from_pointing(cls, ra, dec, theta, time=Time.now()):
-        wcs = VISDAReference.get_wcs(target_ra=ra, target_dec=dec, theta=theta)
-        prf = SpatialPRF.from_reference("VISDA")
-        return cls(prf=prf, wcs=wcs, time=time)
+    def from_pointing(
+        cls, ra, dec, theta, instrument="VISDA", time=Time.now()
+    ):
+        if instrument.lower() in ["v", "vis", "vda", "visda"]:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                wcs = VISDAReference.get_wcs_from_SOC(
+                    target_ra=ra, target_dec=dec, theta=theta
+                )
+            prf = PRF.from_reference("VISDA")
+            return cls(prf=prf, wcs=wcs, time=time)
+        elif instrument.lower() in ["n", "nir", "nirda", "ir"]:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                wcs = NIRDAReference.get_wcs_from_SOC(
+                    target_ra=ra, target_dec=dec, theta=theta
+                )
+            prf = PRF.from_reference("NIRDA")
+            return cls(prf=prf, wcs=wcs, time=time)
 
     def plot(self, **kwargs):
         """Plots the SkyScene. Use this functon to visually inspect the SkyScene."""
@@ -266,7 +280,7 @@ class SkyScene(FITSMixins):
         )
         cmap = kwargs.pop("cmap", "viridis")
         vmin = kwargs.pop("vmin", 0)
-        vmax = kwargs.pop("vmax", 100)
+        vmax = kwargs.pop("vmax", image.max())
         im = ax.pcolormesh(
             c,
             r,
@@ -282,7 +296,7 @@ class SkyScene(FITSMixins):
             aspect="equal",
         )
         cbar = plt.colorbar(im, ax=ax)
-        cbar.set_label("Flux [e$^-$/s]")
+        cbar.set_label("Flux [count$^-$/s]")
         return fig
 
     def _get_row0(self, delta_pos=None):
@@ -313,8 +327,8 @@ class SkyScene(FITSMixins):
         self,
         target,
         delta_pos=None,
-        relative_threshold=0.005,
-        absolute_threshold=50,
+        relative_threshold=0.00000005,
+        absolute_threshold=1,
     ):
         """
         Obtain the aperture and aperture statistics for a particular target.
@@ -341,7 +355,7 @@ class SkyScene(FITSMixins):
         elif isinstance(target, (int, np.int64)):
             idx = int(target)
         if self.X is None:
-            aper = np.zeros(self.imshape, bool)
+            aper = np.zeros(self.imshape, int)
             contamination = 0.0
             completeness = 0.0
             total_in_aperture = 0.0
@@ -353,12 +367,18 @@ class SkyScene(FITSMixins):
             aper = (im1 > absolute_threshold) & (
                 (im1 / self.flux[idx].value) > relative_threshold
             )
+            other_stars_aper = ((im2 - im1) > absolute_threshold) & (
+                ((im2 - im1) / self.flux[idx].value) > relative_threshold
+            )
 
             aper = aper.astype(bool)
             contamination = (im2 - im1)[aper].sum() / im1.sum()
             completeness = (im1)[aper].sum() / (self.flux[idx].value)
             total_in_aperture = (im1)[aper].sum()
-        return aper, contamination, completeness, total_in_aperture
+            bitaper = ((aper.astype(int) * 2) ** 1) | (
+                (other_stars_aper.astype(int) * 2) ** 2
+            )
+        return bitaper, contamination, completeness, total_in_aperture
 
     @add_docstring(
         parameters=["delta_pos", "relative_threshold", "absolute_threshold"],
@@ -522,8 +542,10 @@ class DispersedSkyScene(SkyScene):
     @classmethod
     @add_docstring(parameters=["ra", "dec", "theta", "time"])
     def from_pointing(cls, ra, dec, theta, time=Time.now()):
-        wcs = NIRDAReference.get_wcs(target_ra=ra, target_dec=dec, theta=theta)
-        prf = DispersedPRF.from_reference("NIRDA")
+        wcs = NIRDAReference.get_wcs_from_SOC(
+            target_ra=ra, target_dec=dec, theta=theta
+        )
+        prf = PRF.from_reference("NIRDA")
         return cls(prf=prf, wcs=wcs, time=time)
 
 
@@ -661,7 +683,9 @@ class ROISkyScene(SkyScene):
     def from_pointing(
         cls, ra, dec, theta, nROIs, ROI_corners, ROI_size, time=Time.now()
     ):
-        wcs = VISDAReference.get_wcs(target_ra=ra, target_dec=dec, theta=theta)
+        wcs = VISDAReference.get_wcs_from_SOC(
+            target_ra=ra, target_dec=dec, theta=theta
+        )
         prf = SpatialPRF.from_reference("VISDA")
         return cls(
             prf=prf,
@@ -681,7 +705,7 @@ class ROISkyScene(SkyScene):
         )
         cmap = kwargs.pop("cmap", "viridis")
         vmin = kwargs.pop("vmin", 0)
-        vmax = kwargs.pop("vmax", 100)
+        vmax = kwargs.pop("vmax", image.max())
         im = ax.pcolormesh(
             np.hstack(image),
             cmap=cmap,
@@ -700,5 +724,5 @@ class ROISkyScene(SkyScene):
             xlim=(0, self.ROI_size[0] * self.nROIs),
         )
         cbar = plt.colorbar(im, ax=ax, orientation="horizontal")
-        cbar.set_label("Flux [e$-$/s]")
+        cbar.set_label("Flux [count$-$/s]")
         return fig

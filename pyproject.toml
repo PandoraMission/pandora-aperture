@@ -1,6 +1,6 @@
 [project]
 name = "pandoraaperture"
-version = "0.1.14"
+version = "0.2.0"
 description = ""
 authors = [
     {name = "Christina Hedges",email = "christina.l.hedges@nasa.gov"}
@@ -16,7 +16,7 @@ dependencies = [
     "matplotlib (>=2.0.0)",
     "astropy (>=6.0.1)",
     "gaiaoffline (>=1.0.3,<2.0.0)",
-    "pandoraref (>=0.3.0)"
+    "pandoraref (>=2.3.2)"
 ]
 
 [tool.poetry]
