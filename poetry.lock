@@ -3541,14 +3541,14 @@ files = [
 
 [[package]]
 name = "pandoraref"
-version = "2.3.2"
+version = "2.6.1"
 description = ""
 optional = false
 python-versions = "<3.13,>=3.9"
 groups = ["main"]
 files = [
-    {file = "pandoraref-2.3.2-py3-none-any.whl", hash = "sha256:bed62d1ae1e84ccfbcf92d9355a500b313b12d9f0f8c4e39771d22b6b79ac7f7"},
-    {file = "pandoraref-2.3.2.tar.gz", hash = "sha256:c098562ad04f55c82fa9899b980eca27bdc71fcdd9dd95a8f23b1e50de80652f"},
+    {file = "pandoraref-2.6.1-py3-none-any.whl", hash = "sha256:4f732d3e9e371e883b227535846749e884c86fe4a6019a76f18d14da77cd661a"},
+    {file = "pandoraref-2.6.1.tar.gz", hash = "sha256:7a37c38026e9ea0d7207299dcdcdf955445bbfb7857ab586cea4a76f3f1d2f18"},
 ]
 
 [package.dependencies]
@@ -5481,4 +5481,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<3.13"
-content-hash = "efb773126ac691d9916f148ba65de12c0048a28d33a7680e701afe5044593c78"
+content-hash = "ec4b27343c3b1481aaee9df1dbef3782637c2f10723541be0e9af13beb0fbb9f"
