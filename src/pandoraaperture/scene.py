@@ -29,6 +29,7 @@ class SkyScene(FITSMixins):
     wcs: WCS
     time: Time = Time.now()
     user_cat: pd.DataFrame = None
+    pixel_buffer: tuple = (30, 30)
 
     @property
     def wcs_trimmed(self):
@@ -43,15 +44,25 @@ class SkyScene(FITSMixins):
     @add_docstring(parameters=["cat"])
     def _clean_catalog(self, cat):
         """Hidden method that returns a cleaned version of a catalog."""
-        k = (cat.row.values > (self.prf.imcorner[0] - self.pixel_buffer)) & (
+        k = (
+            cat.row.values > (self.prf.imcorner[0] - self.pixel_buffer[0])
+        ) & (
             cat.row.values
-            < (self.prf.imcorner[0] + self.prf.imshape[0] + self.pixel_buffer)
+            < (
+                self.prf.imcorner[0]
+                + self.prf.imshape[0]
+                + self.pixel_buffer[0]
+            )
         )
         k &= (
-            cat.column.values > (self.prf.imcorner[1] - self.pixel_buffer)
+            cat.column.values > (self.prf.imcorner[1] - self.pixel_buffer[1])
         ) & (
             cat.column.values
-            < (self.prf.imcorner[1] + self.prf.imshape[1] + self.pixel_buffer)
+            < (
+                self.prf.imcorner[1]
+                + self.prf.imshape[1]
+                + self.pixel_buffer[1]
+            )
         )
         new_cat = cat[k].reset_index(drop=True)
         center = np.asarray(self.imcorner) + np.asarray(self.imshape) / 2
@@ -122,12 +133,12 @@ class SkyScene(FITSMixins):
         center = (imcorner[0] + imshape[0] / 2, imcorner[1] + imshape[1] / 2)
         c = self.wcs.pixel_to_world(*center[::-1])
         r1, r2 = (
-            imcorner[0] - self.pixel_buffer,
-            imcorner[0] + imshape[0] + self.pixel_buffer,
+            imcorner[0] - self.pixel_buffer[0],
+            imcorner[0] + imshape[0] + self.pixel_buffer[0],
         )
         c1, c2 = (
-            imcorner[1] - self.pixel_buffer,
-            imcorner[1] + imshape[1] + self.pixel_buffer,
+            imcorner[1] - self.pixel_buffer[1],
+            imcorner[1] + imshape[1] + self.pixel_buffer[1],
         )
 
         # add buffer here for DispersedPRF
@@ -178,7 +189,9 @@ class SkyScene(FITSMixins):
         return
 
     def __post_init__(self):
-        self.pixel_buffer = int(config["SETTINGS"]["pixel_buffer"])
+        # self.pixel_buffer = int(config["SETTINGS"]["pixel_buffer"])
+        if isinstance(self.pixel_buffer, int):
+            self.pixel_buffer = (self.pixel_buffer, self.pixel_buffer)
         self.cols = config["SETTINGS"]["catalog_columns"].split(", ")
         self._check_user_cat()
         self.time = Time(self.time)
@@ -450,19 +463,19 @@ class DispersedSkyScene(SkyScene):
         )
         k = (
             cat.row.values
-            > (self.prf.imcorner[0] - length - self.pixel_buffer)
+            > (self.prf.imcorner[0] - length - self.pixel_buffer[0])
         ) & (
             cat.row.values
             < (
                 self.prf.imcorner[0]
                 + self.prf.imshape[0]
                 + length
-                + self.pixel_buffer
+                + self.pixel_buffer[0]
             )
         )
         # Pandora NIR side has a physical block on certain regions so we'll remove any part of the catalog that has sources in those regions
-        k &= cat.row.values > (512 - length - self.pixel_buffer)
-        k &= cat.row.values < ((1024 + 512) + length + self.pixel_buffer)
+        k &= cat.row.values > (512 - length - self.pixel_buffer[0])
+        k &= cat.row.values < ((1024 + 512) + length + self.pixel_buffer[0])
 
         length = (
             self.prf.trace_column.value.max()
@@ -470,19 +483,19 @@ class DispersedSkyScene(SkyScene):
         )
         k &= (
             cat.column.values
-            > (self.prf.imcorner[1] - length - self.pixel_buffer)
+            > (self.prf.imcorner[1] - length - self.pixel_buffer[1])
         ) & (
             cat.column.values
             < (
                 self.prf.imcorner[1]
                 + self.prf.imshape[1]
                 + length
-                + self.pixel_buffer
+                + self.pixel_buffer[1]
             )
         )
 
         # Pandora NIR side has a physical block on certain regions so we'll remove any part of the catalog that has sources in those regions
-        k &= cat.column.values > ((1024 + 256) - length - self.pixel_buffer)
+        k &= cat.column.values > ((1024 + 256) - length - self.pixel_buffer[1])
 
         # Faint sources are a waste of compute
         k &= self._get_NIRDAflux(cat) > (500 * u.electron / u.second)
@@ -527,7 +540,9 @@ class DispersedSkyScene(SkyScene):
     def __post_init__(self):
         if not isinstance(self.prf, DispersedPRF):
             raise ValueError("Must pass `DispersedPRF`.")
-        self.pixel_buffer = int(config["SETTINGS"]["pixel_buffer"])
+        # self.pixel_buffer = int(config["SETTINGS"]["pixel_buffer"])
+        if isinstance(self.pixel_buffer, int):
+            self.pixel_buffer = (self.pixel_buffer, self.pixel_buffer)
         self.cols = config["SETTINGS"]["catalog_columns"].split(", ")
         self._spectrum_norm = (
             NIRDAReference.get_spectrum_normalization_per_pixel(
@@ -585,26 +600,26 @@ class ROISkyScene(SkyScene):
             k |= (
                 (
                     cat.row.values
-                    > (self.ROI_corners[idx][0] - self.pixel_buffer)
+                    > (self.ROI_corners[idx][0] - self.pixel_buffer[0])
                 )
                 & (
                     cat.row.values
                     < (
                         self.ROI_corners[idx][0]
                         + self.ROI_size[0]
-                        + self.pixel_buffer
+                        + self.pixel_buffer[0]
                     )
                 )
                 & (
                     cat.column.values
-                    > (self.ROI_corners[idx][1] - self.pixel_buffer)
+                    > (self.ROI_corners[idx][1] - self.pixel_buffer[1])
                 )
                 & (
                     cat.column.values
                     < (
                         self.ROI_corners[idx][1]
                         + self.ROI_size[1]
-                        + self.pixel_buffer
+                        + self.pixel_buffer[1]
                     )
                 )
             )
