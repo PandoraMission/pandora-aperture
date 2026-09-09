@@ -100,20 +100,20 @@ class FITSMixins:
         )
         hdu = fits.CompImageHDU(data=aper.astype(np.int16), name="APERTURE")
         hdu.header["CONTAM"] = (
-            contamination,
+            np.nan_to_num(contamination),
             "Flux not from the target in aperture in e/s",
         )
         hdu.header["COMPLTE"] = (
-            completeness,
+            np.nan_to_num(completeness),
             "Fraction of flux from the target in aperture",
         )
         hdu.header["TOTAP"] = (
-            total_in_aperture,
+            np.nan_to_num(total_in_aperture),
             "Total flux expected in aperture in e/s",
         )
         for attr in ["RA", "Dec", "row", "column"]:
-            hdu.header[attr] = self.cat.iloc[idx][attr]
-        hdu.header["GAIA_ID"] = self.cat.iloc[idx]["source_id"]
+            hdu.header[attr] = np.nan_to_num(self.cat.iloc[idx][attr])
+        hdu.header["GAIA_ID"] = np.nan_to_num(self.cat.iloc[idx]["source_id"])
         hdu.header["IMSIZE0"] = (
             self.prf.imshape[0],
             "Size of the full detector image in ROW",
